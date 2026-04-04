@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Manrope', system-ui, sans-serif;
+  --font-display: 'Outfit', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --color-forest-950: #0a2a20;
+  --color-forest-900: #1a3028;
+  --color-forest-800: #1f4236;
+  --color-forest-700: #2e5a4a;
+  --color-forest-600: #4a705d;
+  --color-forest-500: #6b8f7a;
+  --color-sand-100: #f5e9d3;
+  --color-sand-200: #e8d9b8;
+  --color-sand-300: #d4c2a0;
+  --color-sand-400: #c0a67d;
+  --color-sand-500: #a68d6c;
+  --color-terra: #b25c47;
+  --color-terra-dark: #8a4636;
+  --color-moss: #5c7a5c;
+  --color-gold: #c29a64;
+  --color-amber: #d4a017;
+}
+
+/* Custom utilities */
+.bg-earth {
+  background: linear-gradient(145deg, #132f26 0%, #0a2a20 100%);
+}
+
+.bento-card {
+  background: #132f26;
+  border: 1px solid #3a5c4f;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bento-card:hover {
+  border-color: #6b8f7a;
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.4);
+}
+
+.spotlight-card {
+  position: relative;
+  overflow: hidden !important;
+  --spot-x: 50%;
+  --spot-y: 50%;
+}
+
+.spotlight-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at var(--spot-x, 50%) var(--spot-y, 50%), rgba(29,158,117,0.38), rgba(29,158,117,0) 45%);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  mix-blend-mode: screen;
+  z-index: 1;
+}
+
+.spotlight-card:hover::before {
+  opacity: 1;
+}
+
