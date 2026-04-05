@@ -662,7 +662,6 @@ function Dashboard() {
             </div>
             <RoleSwitcher />
           </div>
-          <div className="text-center text-[10px] text-sand-500 mt-3">v1.0</div>
         </div>
       </aside>
 
