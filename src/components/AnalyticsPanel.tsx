@@ -90,7 +90,7 @@ export default function AnalyticsPanel() {
   return (
     <div className="space-y-8">
       {/* ── Header ── */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-semibold text-sand-100 font-display">Analytics</h2>
           <p className="text-sm text-sand-500 mt-0.5">Deep-dive into your financial patterns</p>

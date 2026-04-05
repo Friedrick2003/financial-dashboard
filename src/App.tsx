@@ -4,11 +4,11 @@ import { formatCurrency, formatDate, categories, exportToCSV, exportToJSON } fro
 import { useSpotlight } from './lib/spotlight';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  User, TrendUp, ArrowUp, ArrowDown, Plus, PencilSimple, Trash, X, ChartBar, Target
+  User, TrendUp, ArrowUp, ArrowDown, Plus, PencilSimple, Trash, X, ChartBar, Target, List
 } from '@phosphor-icons/react';
 import CircularProgressRing from './components/CircularProgressRing';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
-import { parseISO, format, eachMonthOfInterval, subMonths, startOfMonth, getMonth, getYear, addMonths } from 'date-fns';
+import { parseISO, format, addMonths } from 'date-fns';
 import SpendingHeatmap from './components/SpendingHeatmap';
 import AnalyticsPanel from './components/AnalyticsPanel';
 import type { Transaction } from './types';
@@ -42,7 +42,7 @@ function BalanceCard() {
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bento-card rounded-3xl p-8 relative overflow-hidden col-span-2 lg:col-span-1 row-span-1 spotlight-card"
+      className="bento-card rounded-3xl p-8 relative overflow-hidden col-span-1 row-span-1 spotlight-card"
       style={{ minHeight: '260px', ...style }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
@@ -584,6 +584,7 @@ function InsightsPanel() {
 function Dashboard() {
   const { loading, role, transactions } = useFinance();
   const [tab, setTab] = useState<'overview' | 'transactions' | 'insights' | 'analytics'>('overview');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   if (loading) {
     return (
@@ -604,9 +605,17 @@ function Dashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-forest-950 text-sand-200 font-sans flex">
+    <div className="min-h-screen bg-forest-950 text-sand-200 font-sans flex relative">
+      {/* Mobile Sidebar Overlay */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-sm" 
+          onClick={() => setIsSidebarOpen(false)} 
+        />
+      )}
+
       {/* Left Sidebar */}
-      <aside className="w-72 bg-forest-900 border-r border-forest-800 flex flex-col fixed h-screen">
+      <aside className={`w-72 bg-forest-900 border-r border-forest-800 flex flex-col fixed h-screen z-50 transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
         {/* Logo */}
         <div className="p-8 flex items-center gap-3 border-b border-forest-800">
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-moss to-forest-600 flex items-center justify-center">
@@ -618,8 +627,7 @@ function Dashboard() {
           </div>
         </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 px-4 py-8">
+        <nav className="flex-1 px-4 py-8 overflow-y-auto">
           <div className="text-xs text-sand-500 px-4 mb-3 font-medium tracking-widest">MAIN</div>
           <div className="space-y-1">
             {navItems.map((item) => {
@@ -628,7 +636,10 @@ function Dashboard() {
               return (
                 <button
                   key={item.id}
-                  onClick={() => setTab(item.id as any)}
+                  onClick={() => {
+                    setTab(item.id as any);
+                    setIsSidebarOpen(false);
+                  }}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-left transition-all ${active ? 'bg-forest-800 text-sand-100 shadow-sm border-l-4 border-moss' : 'text-sand-400 hover:bg-forest-800/50 hover:text-sand-200'}`}
                 >
                   <Icon size={20} />
@@ -656,26 +667,33 @@ function Dashboard() {
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 ml-72">
+      <div className="flex-1 w-full lg:ml-72 min-h-screen flex flex-col min-w-0">
         {/* Top Header Bar */}
-        <header className="sticky top-0 z-40 bg-forest-950/95 backdrop-blur-lg border-b border-forest-800">
-          <div className="max-w-6xl mx-auto px-10 h-20 flex items-center justify-between">
-            <div>
-              <h2 className="font-display text-2xl font-semibold text-sand-100">
-                {tab === 'overview' && 'Control Room'}
-                {tab === 'transactions' && 'Transaction Ledger'}
-                {tab === 'analytics' && 'Analytics'}
-                {tab === 'insights' && 'Key Insights'}
-              </h2>
-              <p className="text-sm text-sand-500 -mt-1">
-                {tab === 'overview' && 'Financial overview & trends'}
-                {tab === 'transactions' && 'All activity and records'}
-                {tab === 'analytics' && 'Patterns, trends & breakdowns'}
-                {tab === 'insights' && 'Patterns and observations'}
-              </p>
-            </div>
+        <header className="sticky top-0 z-30 bg-forest-950/95 backdrop-blur-lg border-b border-forest-800">
+          <div className="max-w-6xl mx-auto px-4 md:px-10 h-20 flex items-center gap-4">
+            <button 
+              className="p-2 -ml-2 lg:hidden text-sand-400 hover:text-sand-100 rounded-lg hover:bg-forest-800/50"
+              onClick={() => setIsSidebarOpen(true)}
+            >
+              <List size={24} />
+            </button>
+            <div className="flex-1 flex items-center justify-between min-w-0">
+              <div className="truncate pr-4">
+                <h2 className="font-display text-lg md:text-2xl font-semibold text-sand-100 truncate">
+                  {tab === 'overview' && 'Control Room'}
+                  {tab === 'transactions' && 'Transaction Ledger'}
+                  {tab === 'analytics' && 'Analytics'}
+                  {tab === 'insights' && 'Key Insights'}
+                </h2>
+                <p className="text-xs md:text-sm text-sand-500 hidden sm:block -mt-1">
+                  {tab === 'overview' && 'Financial overview & trends'}
+                  {tab === 'transactions' && 'All activity and records'}
+                  {tab === 'analytics' && 'Patterns, trends & breakdowns'}
+                  {tab === 'insights' && 'Patterns and observations'}
+                </p>
+              </div>
 
-            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
               {tab === 'transactions' && role === 'admin' && (
                 <button 
                   onClick={() => {
@@ -685,27 +703,29 @@ function Dashboard() {
                   }}
                   className="flex items-center gap-2 px-4 py-2 bg-terra hover:bg-terra-dark rounded-2xl text-sm font-medium text-white transition-colors"
                 >
-                  <Plus size={16} /> Add Transaction
+                  <span className="hidden sm:inline">Add Transaction</span>
+                  <span className="sm:hidden">Add</span>
                 </button>
               )}
               <button 
                 onClick={() => exportToCSV(transactions)}
-                className="flex items-center gap-2 px-4 py-2 bg-moss hover:bg-moss/90 rounded-2xl text-sm font-medium text-white transition-colors shadow-sm"
+                className="hidden sm:flex items-center gap-2 px-4 py-2 bg-moss hover:bg-moss/90 rounded-2xl text-sm font-medium text-white transition-colors shadow-sm"
               >
-                Export CSV
+                CSV
               </button>
               <button 
                 onClick={() => exportToJSON(transactions)}
-                className="flex items-center gap-2 px-4 py-2 bg-moss hover:bg-moss/90 rounded-2xl text-sm font-medium text-white transition-colors shadow-sm"
+                className="hidden sm:flex items-center gap-2 px-4 py-2 bg-moss hover:bg-moss/90 rounded-2xl text-sm font-medium text-white transition-colors shadow-sm"
               >
-                Export JSON
+                JSON
               </button>
+            </div>
             </div>
           </div>
         </header>
 
         {/* Content */}
-        <main className="max-w-6xl mx-auto px-10 py-10">
+        <main className="flex-1 w-full max-w-6xl mx-auto px-4 md:px-10 py-6 md:py-10">
           {/* Overview Tab */}
           {tab === 'overview' && (
             <div className="space-y-8">
