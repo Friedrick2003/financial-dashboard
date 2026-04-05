@@ -45,6 +45,9 @@
   overflow: hidden !important;
   --spot-x: 50%;
   --spot-y: 50%;
+  --rot-x: 0deg;
+  --rot-y: 0deg;
+  transform-style: preserve-3d;
 }
 
 .spotlight-card::before {
@@ -56,10 +59,16 @@
   opacity: 0;
   transition: opacity 0.25s ease;
   mix-blend-mode: screen;
-  z-index: 1;
+  z-index: 10;
+  transform: translateZ(10px);
 }
 
 .spotlight-card:hover::before {
   opacity: 1;
+}
+
+.bento-card.spotlight-card:hover {
+  transform: perspective(1000px) rotateX(var(--rot-x)) rotateY(var(--rot-y)) scale3d(1.02, 1.02, 1.02) !important;
+  z-index: 20;
 }
 
