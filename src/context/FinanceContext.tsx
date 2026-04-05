@@ -102,22 +102,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
   const fetchTransactions = async () => {
     setLoading(true);
     try {
-      // Build query parameters from filter state
-      const params = new URLSearchParams();
-      
-      if (searchTerm) params.append('search', searchTerm);
-      if (filterType && filterType !== 'all') params.append('type', filterType);
-      if (filterCategory) params.append('category', filterCategory);
-      if (sortBy) params.append('sortBy', sortBy);
-      if (dateFrom) params.append('dateFrom', dateFrom);
-      if (dateTo) params.append('dateTo', dateTo);
-      if (amountMin) params.append('amountMin', amountMin);
-      if (amountMax) params.append('amountMax', amountMax);
-      
-      const queryString = params.toString();
-      const url = queryString ? `/api/transactions?${queryString}` : '/api/transactions';
-      
-      const res = await fetch(url);
+      const res = await fetch('/api/transactions');
       if (!res.ok) throw new Error('API unavailable');
       const data = await res.json();
       const txs = Array.isArray(data) && data.length > 0 ? data : MOCK_TRANSACTIONS;

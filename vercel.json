@@ -1,9 +1,4 @@
 {
-  "buildCommand": "npm run build",
-  "devCommand": "npm run dev",
-  "installCommand": "npm install",
-  "framework": "vite",
-  "outputDirectory": "dist",
   "env": {
     "NEXT_PUBLIC_SUPABASE_URL": "https://zhotwiznxxrkivwjuuhj.supabase.co",
     "NEXT_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_veljyX5R-mrzTn85RpE2rQ_DK1lUeeL",

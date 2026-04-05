@@ -1,3 +1,4 @@
+import React from 'react';
 
 interface CircularProgressRingProps {
   progress: number; // 0-100
