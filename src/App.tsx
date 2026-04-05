@@ -4,11 +4,11 @@ import { formatCurrency, formatDate, categories, exportToCSV, exportToJSON } fro
 import { useSpotlight } from './lib/spotlight';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  User, TrendUp, ArrowUp, ArrowDown, Plus, PencilSimple, Trash, X, ChartBar, Target
+  User, TrendUp, ArrowUp, ArrowDown, Plus, PencilSimple, Trash, X, ChartBar, Target, List
 } from '@phosphor-icons/react';
 import CircularProgressRing from './components/CircularProgressRing';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
-import { parseISO, format, eachMonthOfInterval, subMonths, startOfMonth, getMonth, getYear, addMonths } from 'date-fns';
+import { parseISO, format, addMonths } from 'date-fns';
 import SpendingHeatmap from './components/SpendingHeatmap';
 import AnalyticsPanel from './components/AnalyticsPanel';
 import type { Transaction } from './types';
@@ -39,11 +39,11 @@ function BalanceCard() {
   const balance = income - expenses;
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bento-card rounded-3xl p-8 relative overflow-hidden col-span-2 lg:col-span-1 row-span-1 spotlight-card"
-      style={{ minHeight: '260px', ...style }}
+      className="bento-card rounded-3xl p-6 lg:p-8 relative overflow-hidden col-span-2 lg:col-span-1 row-span-1 spotlight-card"
+      style={{ minHeight: '240px', ...style }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
@@ -60,8 +60,8 @@ function BalanceCard() {
       <div className="relative z-10 flex flex-col h-full">
         <div className="flex items-start justify-between mb-6">
           <div>
-            <div className="text-sand-400 text-sm font-medium tracking-widest">TOTAL BALANCE</div>
-            <div className="text-[42px] leading-none font-semibold text-sand-100 font-mono mt-2">
+            <div className="text-sand-400 text-xs lg:text-sm font-medium tracking-widest">TOTAL BALANCE</div>
+            <div className="text-3xl lg:text-[42px] leading-none font-semibold text-sand-100 font-mono mt-2">
               {formatCurrency(Math.abs(balance))}
             </div>
           </div>
@@ -93,22 +93,22 @@ function IncomeCard() {
   const income = transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1 }}
-      className="bento-card rounded-3xl p-6 flex flex-col spotlight-card"
-      style={{ minHeight: '260px', ...style }}
+      className="bento-card rounded-3xl p-5 lg:p-6 flex flex-col spotlight-card"
+      style={{ minHeight: '220px', ...style }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
       <div className="flex items-center gap-3 mb-4">
-        <div className="p-3 rounded-2xl bg-moss/10">
-          <ArrowUp size={22} className="text-moss" />
+        <div className="p-2 lg:p-3 rounded-2xl bg-moss/10">
+          <ArrowUp size={20} className="text-moss" />
         </div>
-        <div className="text-sand-400 text-sm">TOTAL INCOME</div>
+        <div className="text-sand-400 text-xs lg:text-sm">TOTAL INCOME</div>
       </div>
-      <div className="text-4xl font-semibold text-sand-100 font-mono mt-auto">
+      <div className="text-3xl lg:text-4xl font-semibold text-sand-100 font-mono mt-auto">
         {formatCurrency(income)}
       </div>
       <div className="text-xs text-sand-500 mt-1">This period</div>
@@ -123,22 +123,22 @@ function ExpensesCard() {
   const expenses = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.15 }}
-      className="bento-card rounded-3xl p-6 flex flex-col spotlight-card"
-      style={{ minHeight: '260px', ...style }}
+      className="bento-card rounded-3xl p-5 lg:p-6 flex flex-col spotlight-card"
+      style={{ minHeight: '220px', ...style }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
       <div className="flex items-center gap-3 mb-4">
-        <div className="p-3 rounded-2xl bg-terra/10">
-          <ArrowDown size={22} className="text-terra" />
+        <div className="p-2 lg:p-3 rounded-2xl bg-terra/10">
+          <ArrowDown size={20} className="text-terra" />
         </div>
-        <div className="text-sand-400 text-sm">TOTAL EXPENSES</div>
+        <div className="text-sand-400 text-xs lg:text-sm">TOTAL EXPENSES</div>
       </div>
-      <div className="text-4xl font-semibold text-sand-100 font-mono mt-auto">
+      <div className="text-3xl lg:text-4xl font-semibold text-sand-100 font-mono mt-auto">
         {formatCurrency(expenses)}
       </div>
       <div className="text-xs text-sand-500 mt-1">This period</div>
@@ -166,23 +166,23 @@ function BalanceTrendChart() {
   }, [] as Array<{ date: string; balance: number }>).slice(-20);
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2 }}
-      className="bento-card rounded-3xl p-8 col-span-1 lg:col-span-2 spotlight-card"
+      className="bento-card rounded-3xl p-6 lg:p-8 col-span-1 lg:col-span-2 spotlight-card"
       style={style}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-6 gap-4">
         <div>
-          <div className="text-xl font-semibold text-sand-100">Balance Trend</div>
+          <div className="text-lg lg:text-xl font-semibold text-sand-100">Balance Trend</div>
           <div className="text-sm text-sand-500">Cumulative net over time</div>
         </div>
-        <div className="text-xs px-3 py-1 bg-forest-800 rounded-full text-sand-400">LAST 20 TRANSACTIONS</div>
+        <div className="text-xs px-3 py-1 bg-forest-800 rounded-full text-sand-400 w-fit">LAST 20 TRANSACTIONS</div>
       </div>
-      <div className="h-72">
+      <div className="h-60 lg:h-72">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data}>
             <defs>
@@ -584,6 +584,7 @@ function InsightsPanel() {
 function Dashboard() {
   const { loading, role, transactions } = useFinance();
   const [tab, setTab] = useState<'overview' | 'transactions' | 'insights' | 'analytics'>('overview');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   if (loading) {
     return (
@@ -605,17 +606,33 @@ function Dashboard() {
 
   return (
     <div className="min-h-screen bg-forest-950 text-sand-200 font-sans flex">
-      {/* Left Sidebar */}
-      <aside className="w-72 bg-forest-900 border-r border-forest-800 flex flex-col fixed h-screen">
+      {/* Backdrop for mobile sidebar */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+      
+      {/* Left Sidebar - Hidden on mobile, shown on lg screens */}
+      <aside className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:relative w-72 bg-forest-900 border-r border-forest-800 flex flex-col h-screen z-50 transition-transform duration-300`}>
         {/* Logo */}
-        <div className="p-8 flex items-center gap-3 border-b border-forest-800">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-moss to-forest-600 flex items-center justify-center">
-            <TrendUp size={28} weight="bold" className="text-sand-100" />
+        <div className="p-6 lg:p-8 flex items-center justify-between lg:justify-start gap-3 border-b border-forest-800">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-moss to-forest-600 flex items-center justify-center">
+              <TrendUp size={28} weight="bold" className="text-sand-100" />
+            </div>
+            <div>
+              <div className="font-display text-2xl lg:text-3xl font-semibold text-sand-100 tracking-tight">FinTrack</div>
+              <div className="text-[10px] text-sand-500 tracking-[2px]">Track Analyse and Grow.</div>
+            </div>
           </div>
-          <div>
-            <div className="font-display text-3xl font-semibold text-sand-100 tracking-tight">FinTrack</div>
-            <div className="text-[10px] text-sand-500 tracking-[2px]">Track Analyse and Grow.</div>
-          </div>
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="lg:hidden p-2 rounded-lg bg-forest-800 text-sand-300 hover:bg-forest-700"
+          >
+            <X size={20} />
+          </button>
         </div>
 
         {/* Navigation */}
@@ -651,73 +668,83 @@ function Dashboard() {
             </div>
             <RoleSwitcher />
           </div>
-          <div className="text-center text-[10px] text-sand-500 mt-3">v1.0</div>
         </div>
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 ml-72">
+      <div className="flex-1 lg:ml-72">
         {/* Top Header Bar */}
         <header className="sticky top-0 z-40 bg-forest-950/95 backdrop-blur-lg border-b border-forest-800">
-          <div className="max-w-6xl mx-auto px-10 h-20 flex items-center justify-between">
-            <div>
-              <h2 className="font-display text-2xl font-semibold text-sand-100">
-                {tab === 'overview' && 'Control Room'}
-                {tab === 'transactions' && 'Transaction Ledger'}
-                {tab === 'analytics' && 'Analytics'}
-                {tab === 'insights' && 'Key Insights'}
-              </h2>
-              <p className="text-sm text-sand-500 -mt-1">
-                {tab === 'overview' && 'Financial overview & trends'}
-                {tab === 'transactions' && 'All activity and records'}
-                {tab === 'analytics' && 'Patterns, trends & breakdowns'}
-                {tab === 'insights' && 'Patterns and observations'}
-              </p>
+          <div className="max-w-6xl mx-auto px-4 lg:px-10 h-20 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              {/* Hamburger menu for mobile */}
+              <button
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="lg:hidden p-2 rounded-lg bg-forest-800 text-sand-300 hover:bg-forest-700"
+              >
+                <List size={24} />
+              </button>
+              <div>
+                <h2 className="font-display text-xl lg:text-2xl font-semibold text-sand-100">
+                  {tab === 'overview' && 'Control Room'}
+                  {tab === 'transactions' && 'Transaction Ledger'}
+                  {tab === 'analytics' && 'Analytics'}
+                  {tab === 'insights' && 'Key Insights'}
+                </h2>
+                <p className="text-sm text-sand-500 -mt-1">
+                  {tab === 'overview' && 'Financial overview & trends'}
+                  {tab === 'transactions' && 'All activity and records'}
+                  {tab === 'analytics' && 'Patterns, trends & breakdowns'}
+                  {tab === 'insights' && 'Patterns and observations'}
+                </p>
+              </div>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 lg:gap-4">
               {tab === 'transactions' && role === 'admin' && (
-                <button 
+                <button
                   onClick={() => {
                     // Trigger add transaction modal - we'll dispatch via custom event or use context
                     const btn = document.querySelector('[data-add-tx]') as HTMLButtonElement;
                     btn?.click();
                   }}
-                  className="flex items-center gap-2 px-4 py-2 bg-terra hover:bg-terra-dark rounded-2xl text-sm font-medium text-white transition-colors"
+                  className="flex items-center gap-2 px-3 py-2 lg:px-4 bg-terra hover:bg-terra-dark rounded-2xl text-sm font-medium text-white transition-colors"
                 >
-                  <Plus size={16} /> Add Transaction
+                  <Plus size={16} /> <span className="hidden sm:inline">Add Transaction</span>
                 </button>
               )}
-              <button 
+              <button
                 onClick={() => exportToCSV(transactions)}
-                className="flex items-center gap-2 px-4 py-2 bg-moss hover:bg-moss/90 rounded-2xl text-sm font-medium text-white transition-colors shadow-sm"
+                className="flex items-center gap-2 px-3 py-2 lg:px-4 bg-moss hover:bg-moss/90 rounded-2xl text-sm font-medium text-white transition-colors shadow-sm"
               >
-                Export CSV
+                <span className="hidden sm:inline">Export CSV</span>
+                <span className="sm:hidden">CSV</span>
               </button>
-              <button 
+              <button
                 onClick={() => exportToJSON(transactions)}
-                className="flex items-center gap-2 px-4 py-2 bg-moss hover:bg-moss/90 rounded-2xl text-sm font-medium text-white transition-colors shadow-sm"
+                className="flex items-center gap-2 px-3 py-2 lg:px-4 bg-moss hover:bg-moss/90 rounded-2xl text-sm font-medium text-white transition-colors shadow-sm"
               >
-                Export JSON
+                <span className="hidden sm:inline">Export JSON</span>
+                <span className="sm:hidden">JSON</span>
               </button>
             </div>
           </div>
         </header>
 
         {/* Content */}
-        <main className="max-w-6xl mx-auto px-10 py-10">
+        <main className="max-w-6xl mx-auto px-4 lg:px-10 py-6 lg:py-10">
           {/* Overview Tab */}
           {tab === 'overview' && (
             <div className="space-y-8">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
                 <BalanceCard />
                 <IncomeCard />
                 <ExpensesCard />
               </div>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 gap-4 lg:gap-6">
                 <BalanceTrendChart />
               </div>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
                 <SpendingBreakdownChart />
                 <SpendingSummaryCard />
               </div>
@@ -750,7 +777,7 @@ function Dashboard() {
                     <Target size={28} className="text-amber" />
                   </div>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-6">
                   {(() => {
                     const financialGoals = [
                       { title: 'Emergency Fund', targetAmount: 500000, currentAmount: 320000, progress: 64, estimatedDate: addMonths(new Date(), 6), color: '#10b981' },
@@ -863,8 +890,8 @@ function Dashboard() {
           )}
         </main>
 
-        <footer className="border-t border-forest-800 py-8 mt-12">
-          <div className="max-w-6xl mx-auto px-10 text-center text-sand-500 text-sm">
+        <footer className="border-t border-forest-800 py-6 lg:py-8 mt-8 lg:mt-12">
+          <div className="max-w-6xl mx-auto px-4 lg:px-10 text-center text-sand-500 text-sm">
             FinTrack
           </div>
         </footer>
